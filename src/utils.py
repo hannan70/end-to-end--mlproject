@@ -2,18 +2,30 @@ import os
 import sys 
 import numpy as np
 import pandas as pd
+from src.logger import logging
 from src.exception import CustomException
 import dill
 from sklearn.metrics import r2_score 
+from sklearn.model_selection import GridSearchCV
 
 
-def evaluate_models(X_train, X_test, y_train, y_test, models):
+def evaluate_models(X_train, X_test, y_train, y_test, models, param):
     
     model_list = {}
 
     for name, model in models.items():
+
+        para = param[name]
+        logging.info(f"Evaluation model {name} with parameters: {para}")
+
+        gs = GridSearchCV(model,para, cv=5)
         # train the model
-        model.fit(X_train, y_train)
+        gs.fit(X_train,y_train)
+
+         
+        model.set_params(**gs.best_params_)
+        model.fit(X_train,y_train)
+        
 
         # predict the model
         y_pred = model.predict(X_test)
@@ -23,6 +35,7 @@ def evaluate_models(X_train, X_test, y_train, y_test, models):
         
         # keep model name and score
         model_list[name] = test_model_score
+
 
     return model_list
 
