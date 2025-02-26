@@ -88,7 +88,7 @@ class DataTransformation:
             # np.c_ means column wise data concate
             train_arr = np.c_[input_feature_train_arr, np.array(target_feature_train_df)]
             test_arr = np.c_[input_feature_test_arr, np.array(target_feature_test_df)]
- 
+
 
             logging.info("Saved preprocessing object")
             
